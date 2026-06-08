@@ -15,10 +15,13 @@ jobs:
       - name: Check out code
         uses: actions/checkout@v4
 
+      - name: Set up uv
+        uses: astral-sh/setup-uv@v5
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.11"
+          python-version: "3.12"
 
       - name: Set up Go
         uses: actions/setup-go@v5
@@ -27,21 +30,19 @@ jobs:
 
       - name: Install backend dependencies
         working-directory: apps/server
-        run: |
-          python -m pip install --upgrade pip
-          python -m pip install -e ".[dev]"
+        run: uv sync --extra dev --locked
 
       - name: Run backend Django tests
         working-directory: apps/server
-        run: python -m pytest
+        run: uv run pytest
 
       - name: Check backend migrations
         working-directory: apps/server
-        run: python manage.py makemigrations --check --dry-run
+        run: uv run python manage.py makemigrations --check --dry-run
 
       - name: Apply backend migrations
         working-directory: apps/server
-        run: python manage.py migrate --noinput
+        run: uv run python manage.py migrate --noinput
 
       - name: Run device gateway Go tests
         working-directory: services/device-gateway

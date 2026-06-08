@@ -28,6 +28,24 @@ run_python_tests() {
   echo "Validating JSON schema syntax"
   "$python_bin" -m json.tool "$ROOT_DIR/schemas/config-artifact.schema.json" >/dev/null
 
+  if command -v uv >/dev/null 2>&1; then
+    echo "Installing backend dependencies with uv lockfile"
+    (cd "$ROOT_DIR/apps/server" && uv sync --extra dev --locked)
+
+    echo "Running backend Django tests"
+    (cd "$ROOT_DIR/apps/server" && uv run pytest)
+
+    echo "Checking backend migrations"
+    (cd "$ROOT_DIR/apps/server" && uv run python manage.py makemigrations --check --dry-run)
+
+    echo "Applying backend migrations"
+    (cd "$ROOT_DIR/apps/server" && uv run python manage.py migrate --noinput)
+    return 0
+  fi
+
+  echo "uv not found; falling back to editable pip/venv backend checks."
+  echo "Install uv for reproducible backend checks: https://docs.astral.sh/uv/getting-started/installation/"
+
   if ! python_bin="$(ensure_server_python "$python_bin")"; then
     echo "Django test dependencies are not available and could not be installed; skipping backend Django checks"
     return 0

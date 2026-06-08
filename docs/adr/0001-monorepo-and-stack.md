@@ -26,7 +26,9 @@ The intended stack is Python, Django, Django REST Framework, PostgreSQL, Celery,
 
 Shared schemas and docs live close to all implementations, making cross-component contracts easier to review. CI can grow incrementally by component. The repository needs clear ownership boundaries to avoid oversized PRs.
 
-The scaffold intentionally avoids installing Django, Next.js, or real product dependencies before their first implementation PRs.
+Dependencies are scoped to the component that owns them. Backend Python dependencies live under `apps/server`, frontend dependencies belong under `apps/web`, and Go dependencies belong to the relevant Go module. A root Python requirements file would be misleading for this monorepo.
+
+The scaffold intentionally avoids installing Next.js or unrelated product dependencies before their first implementation PRs.
 
 ## Alternatives Considered
 

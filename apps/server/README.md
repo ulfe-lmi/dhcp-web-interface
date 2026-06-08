@@ -2,7 +2,7 @@
 
 Python/Django backend foundation for the future control plane.
 
-Implemented in this chunk:
+Currently implemented:
 
 - minimal Django project wiring;
 - `ipam` app with organizations, sites, IPv4 subnets, DHCP pools, and static DHCP reservations;
@@ -33,31 +33,35 @@ The `access` app provides foundational role labels and helper functions for futu
 
 There are no API endpoints yet. Future API chunks should call these permission helpers rather than duplicating role checks inline.
 
-## Install Development Dependencies
+## Dependency Management
+
+Backend dependency intent lives in `pyproject.toml`. Exact resolved versions live in the committed `uv.lock` lockfile. Use uv for reproducible installs and checks.
+
+Do not add a root `requirements.txt`; this repository is a monorepo, and dependencies stay with the component that owns them.
 
 ```bash
-python -m pip install -e ".[dev]"
+uv sync --extra dev --locked
 ```
 
-If your system Python is externally managed, create and activate a virtual environment first:
+If uv is missing, install it with one of:
 
 ```bash
-python -m venv .venv
-. .venv/bin/activate
-python -m pip install -e ".[dev]"
+curl -LsSf https://astral.sh/uv/install.sh | sh
+python -m pip install uv
+pipx install uv
 ```
 
 ## Run Tests
 
 ```bash
-pytest
+uv run pytest
 ```
 
 ## Run Migration Checks
 
 ```bash
-python manage.py makemigrations --check --dry-run
-python manage.py migrate --noinput
+uv run python manage.py makemigrations --check --dry-run
+uv run python manage.py migrate --noinput
 ```
 
 This is domain and access foundation only. There are no APIs, UI flows, device communication paths, config rendering, deployments, public endpoints, or Pi apply logic in this PR.

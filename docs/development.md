@@ -29,6 +29,16 @@ Python code belongs to the server/control plane. Go code belongs to gateway and 
 
 Do not add product logic to placeholders in this scaffold PR. Future PRs should introduce one product capability at a time with tests.
 
+## Dependency Policy
+
+- Backend Python dependencies live in `apps/server/pyproject.toml`.
+- Exact backend dependency versions are committed in `apps/server/uv.lock`.
+- Backend installs and tests should use `uv sync --extra dev --locked` and `uv run`.
+- Do not add a root `requirements.txt`; this monorepo is not a single Python application.
+- Do not run ad hoc `pip install` commands and leave dependencies undocumented.
+- Frontend dependencies belong in `apps/web/package.json` and a future frontend lockfile.
+- Go dependencies belong in the relevant `go.mod` and `go.sum` files.
+
 ## Branch and PR Workflow
 
 Work on feature branches from fresh `main`. Do not commit directly to `main`. Each PR should explain scope, security impact, tests run, and follow-up work.
