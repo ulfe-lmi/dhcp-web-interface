@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "managed-dhcp-server"
+version = "0.0.0"
+description = "Bootstrap placeholder for the Managed DHCP/IPAM control plane."
+requires-python = ">=3.11"
+dependencies = []
+
+[project.optional-dependencies]
+test = [
+  "pytest>=8",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
