@@ -7,19 +7,20 @@ Currently implemented:
 - minimal Django project wiring;
 - `ipam` app with organizations, sites, IPv4 subnets, DHCP pools, and static DHCP reservations;
 - `access` app with organization memberships, site memberships, permission helpers, and append-only audit events;
+- `api` app with DRF routing under `/api/v1/` for health, current user, and read-only organization/site endpoints;
 - validator functions for MAC addresses, IPv4 addresses/CIDRs, subnet membership, and hostnames;
 - initial migrations and Django model tests.
 
 Planned responsibilities not implemented yet:
 
-- authentication UI and API authentication flows;
+- authentication UI, SSO/OIDC, MFA, and production authentication flows;
 - DNS records and devices;
 - config versioning;
 - deterministic `dnsmasq` rendering;
 - signed config artifact generation;
 - deployment and rollback records;
-- REST APIs;
 - public snapshot publication;
+- membership mutation APIs;
 - automatic audit logging for all mutations.
 
 ## Access App
@@ -31,7 +32,22 @@ The `access` app provides foundational role labels and helper functions for futu
 - permission helpers for viewing sites, editing DHCP data, managing sites, publishing public views, installing devices, and viewing audit events;
 - audit event records with model-level append-only guards.
 
-There are no API endpoints yet. Future API chunks should call these permission helpers rather than duplicating role checks inline.
+Future API chunks should call these permission helpers rather than duplicating role checks inline. Membership mutation endpoints are not implemented yet.
+
+## API
+
+The first DRF API foundation exists under `/api/v1/`.
+
+Current endpoints:
+
+- `GET /api/v1/health/`
+- `GET /api/v1/me/`
+- `GET /api/v1/organizations/`
+- `GET /api/v1/organizations/{id}/`
+- `GET /api/v1/sites/`
+- `GET /api/v1/sites/{id}/`
+
+These endpoints are read-only foundation endpoints. There is no public no-login DHCP/IPAM table endpoint, no membership mutation endpoint, and no production SSO/OIDC/MFA flow yet.
 
 ## Dependency Management
 
@@ -64,4 +80,4 @@ uv run python manage.py makemigrations --check --dry-run
 uv run python manage.py migrate --noinput
 ```
 
-This is domain and access foundation only. There are no APIs, UI flows, device communication paths, config rendering, deployments, public endpoints, or Pi apply logic in this PR.
+This is domain, access, and read-only API foundation only. There are no UI flows, device communication paths, config rendering, deployments, public endpoints, or Pi apply logic in this PR.

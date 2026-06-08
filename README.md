@@ -2,7 +2,7 @@
 
 Managed DHCP/IPAM Edge Appliance is a cloud-managed DDI-lite product concept for administering DHCP/IPAM/DNS state from a server-side control plane while Raspberry Pi edge appliances reconcile signed desired-state configuration to local `dnsmasq`. The server is the source of truth; the Pi is replaceable infrastructure that connects outbound, validates artifacts, applies only approved configuration, and reports status.
 
-Current status: **Backend domain and access foundations exist for organizations, sites, IPv4 subnets, DHCP pools, static reservations, memberships, permission helpers, and audit events; no production DHCP rendering, APIs, UI, deployment, public view, or edge apply logic implemented yet.**
+Current status: **Backend domain, access, and read-only API foundations exist for organizations, sites, IPv4 subnets, DHCP pools, static reservations, memberships, permission helpers, and audit events; no production DHCP rendering, UI, deployment, public view, or edge apply logic implemented yet.**
 
 ## Architecture Overview
 
@@ -55,7 +55,7 @@ For this scaffold:
 - Bash
 - Optional Node.js 20+ for future frontend work
 
-Future product milestones will add DRF, PostgreSQL, Valkey, frontend tooling, and containerized local development.
+Future product milestones will add PostgreSQL, Valkey, frontend tooling, and containerized local development.
 
 ## Run Checks
 
@@ -97,15 +97,16 @@ The public no-login view must be opt-in and disabled by default. It must read fr
 2. Backend domain model and validation foundation.
 3. Access, RBAC, and audit foundation.
 4. Backend dependency hygiene.
-5. Config renderer and signed artifact schema.
-6. Public read-only sanitized snapshot.
-7. Device gateway protocol skeleton.
-8. Raspberry Pi agent skeleton.
-9. Apply helper and `dnsmasq --test` validation.
-10. Deployment lifecycle and rollback tracking.
-11. UI editor for sites, subnets, reservations, devices, and deployments.
-12. Import/export workflow.
-13. Observability and security hardening.
-14. Packaging and release process.
+5. Read-only backend API foundation.
+6. Config renderer and signed artifact schema.
+7. Public read-only sanitized snapshot.
+8. Device gateway protocol skeleton.
+9. Raspberry Pi agent skeleton.
+10. Apply helper and `dnsmasq --test` validation.
+11. Deployment lifecycle and rollback tracking.
+12. UI editor for sites, subnets, reservations, devices, and deployments.
+13. Import/export workflow.
+14. Observability and security hardening.
+15. Packaging and release process.
 
 This repository is not yet functional production software.
