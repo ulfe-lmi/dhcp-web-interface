@@ -26,9 +26,15 @@ The agent performs network communication and validation as an unprivileged proce
 
 Public read-only views are disabled by default. When enabled, they must be backed by sanitized published snapshots. Anonymous endpoints must not expose admin APIs, internal IDs, device credentials, deployment logs, audit records, rendered config files, or hidden columns.
 
+## RBAC Foundation
+
+The backend now has organization and site membership role foundations. Organization roles separate owners/admins from viewers and auditors. Site roles separate site admins, DHCP editors, viewers, public publishers, and device installers. Permission helpers enforce authenticated viewer versus editor/admin behavior for future API chunks.
+
+Anonymous public viewing is still future work. It must remain separate from authenticated admin APIs and must use sanitized published snapshots.
+
 ## Audit
 
-Future implementation must audit meaningful actions, including login events, membership changes, site and reservation changes, imports, config version creation and approval, deployments, rollback, public view changes, enrollment token creation, device enrollment, revocation, and replacement.
+The backend now has append-only audit event records at the model layer. Future implementation must audit meaningful actions, including login events, membership changes, site and reservation changes, imports, config version creation and approval, deployments, rollback, public view changes, enrollment token creation, device enrollment, revocation, and replacement.
 
 ## Rollback
 

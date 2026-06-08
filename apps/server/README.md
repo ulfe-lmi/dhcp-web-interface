@@ -6,12 +6,13 @@ Implemented in this chunk:
 
 - minimal Django project wiring;
 - `ipam` app with organizations, sites, IPv4 subnets, DHCP pools, and static DHCP reservations;
+- `access` app with organization memberships, site memberships, permission helpers, and append-only audit events;
 - validator functions for MAC addresses, IPv4 addresses/CIDRs, subnet membership, and hostnames;
-- initial migration and Django model tests.
+- initial migrations and Django model tests.
 
 Planned responsibilities not implemented yet:
 
-- authentication and authorization;
+- authentication UI and API authentication flows;
 - DNS records and devices;
 - config versioning;
 - deterministic `dnsmasq` rendering;
@@ -19,7 +20,18 @@ Planned responsibilities not implemented yet:
 - deployment and rollback records;
 - REST APIs;
 - public snapshot publication;
-- audit logging.
+- automatic audit logging for all mutations.
+
+## Access App
+
+The `access` app provides foundational role labels and helper functions for future APIs and UI flows:
+
+- organization roles: owner, admin, viewer, auditor;
+- site roles: site admin, DHCP editor, viewer, public publisher, device installer;
+- permission helpers for viewing sites, editing DHCP data, managing sites, publishing public views, installing devices, and viewing audit events;
+- audit event records with model-level append-only guards.
+
+There are no API endpoints yet. Future API chunks should call these permission helpers rather than duplicating role checks inline.
 
 ## Install Development Dependencies
 
@@ -48,4 +60,4 @@ python manage.py makemigrations --check --dry-run
 python manage.py migrate --noinput
 ```
 
-This is domain model only. There are no APIs, UI flows, device communication paths, config rendering, deployments, public endpoints, or Pi apply logic in this PR.
+This is domain and access foundation only. There are no APIs, UI flows, device communication paths, config rendering, deployments, public endpoints, or Pi apply logic in this PR.
