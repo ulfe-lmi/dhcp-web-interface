@@ -36,6 +36,10 @@ Anonymous public viewing is still future work. It must remain separate from auth
 
 Authenticated read API endpoints use membership and RBAC visibility rules. Inaccessible organization and site detail endpoints return 404 to avoid object-existence leakage. The health endpoint is anonymous but intentionally minimal. There is no public no-login DHCP/IPAM table endpoint yet.
 
+## Write API Security
+
+Membership mutation endpoints enforce backend RBAC. Cross-organization and cross-site membership manipulation returns 404, organization owner lockout is prevented by preserving at least one owner membership, and successful membership mutations are audited. Public no-login viewing remains future work and must use sanitized published snapshots only.
+
 ## Audit
 
 The backend now has append-only audit event records at the model layer. Future implementation must audit meaningful actions, including login events, membership changes, site and reservation changes, imports, config version creation and approval, deployments, rollback, public view changes, enrollment token creation, device enrollment, revocation, and replacement.

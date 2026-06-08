@@ -2,7 +2,7 @@
 
 Managed DHCP/IPAM Edge Appliance is a cloud-managed DDI-lite product concept for administering DHCP/IPAM/DNS state from a server-side control plane while Raspberry Pi edge appliances reconcile signed desired-state configuration to local `dnsmasq`. The server is the source of truth; the Pi is replaceable infrastructure that connects outbound, validates artifacts, applies only approved configuration, and reports status.
 
-Current status: **Backend domain, access, and read-only API foundations exist for organizations, sites, IPv4 subnets, DHCP pools, static reservations, memberships, permission helpers, and audit events; no production DHCP rendering, UI, deployment, public view, or edge apply logic implemented yet.**
+Current status: **Backend domain, access, read-only API, and membership-management API foundations exist for organizations, sites, IPv4 subnets, DHCP pools, static reservations, memberships, permission helpers, and audit events; no production DHCP rendering, UI, deployment, public view, or edge apply logic implemented yet.**
 
 ## Architecture Overview
 
@@ -98,15 +98,16 @@ The public no-login view must be opt-in and disabled by default. It must read fr
 3. Access, RBAC, and audit foundation.
 4. Backend dependency hygiene.
 5. Read-only backend API foundation.
-6. Config renderer and signed artifact schema.
-7. Public read-only sanitized snapshot.
-8. Device gateway protocol skeleton.
-9. Raspberry Pi agent skeleton.
-10. Apply helper and `dnsmasq --test` validation.
-11. Deployment lifecycle and rollback tracking.
-12. UI editor for sites, subnets, reservations, devices, and deployments.
-13. Import/export workflow.
-14. Observability and security hardening.
-15. Packaging and release process.
+6. Membership-management API foundation.
+7. Config renderer and signed artifact schema.
+8. Public read-only sanitized snapshot.
+9. Device gateway protocol skeleton.
+10. Raspberry Pi agent skeleton.
+11. Apply helper and `dnsmasq --test` validation.
+12. Deployment lifecycle and rollback tracking.
+13. UI editor for sites, subnets, reservations, devices, and deployments.
+14. Import/export workflow.
+15. Observability and security hardening.
+16. Packaging and release process.
 
 This repository is not yet functional production software.
