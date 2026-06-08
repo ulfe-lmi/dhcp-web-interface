@@ -11,7 +11,9 @@ ALLOWED_HOSTS: list[str] = []
 INSTALLED_APPS = [
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "rest_framework",
     "managed_dhcp_server.access.apps.AccessConfig",
+    "managed_dhcp_server.api.apps.ApiConfig",
     "managed_dhcp_server.ipam.apps.IpamConfig",
 ]
 
@@ -34,3 +36,13 @@ DATABASES = {
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 USE_TZ = True
 TIME_ZONE = "UTC"
+
+REST_FRAMEWORK = {
+    "DEFAULT_AUTHENTICATION_CLASSES": [
+        "rest_framework.authentication.SessionAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
+    ],
+    "DEFAULT_PERMISSION_CLASSES": [
+        "rest_framework.permissions.IsAuthenticated",
+    ],
+}

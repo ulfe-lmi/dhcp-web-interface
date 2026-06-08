@@ -1,6 +1,6 @@
 # Testing
 
-The backend now includes Django model and validator tests for the initial IPAM/DHCP domain foundation plus access-control and audit-event tests. Future implementation must continue adding tests at each component boundary.
+The backend now includes Django model and validator tests for the initial IPAM/DHCP domain foundation, access-control and audit-event tests, and read-only API tests. Future implementation must continue adding tests at each component boundary.
 
 Current backend checks:
 
@@ -16,6 +16,7 @@ uv run python manage.py migrate --noinput
 
 - Backend unit tests for validation, rendering decisions, permissions, and audit event creation.
 - Access tests for membership uniqueness, role behavior, permission helpers, and append-only audit behavior.
+- API tests for health, current-user, read-only organization/site visibility, and read-only method restrictions.
 - API tests for authenticated reads, mutations, RBAC, tenant isolation, pagination, and public endpoint behavior.
 - Frontend tests for critical flows, table behavior, import preview, deployment review, and public view rendering.
 - Go unit tests for gateway message parsing, device identity checks, routing, heartbeats, and result reports.

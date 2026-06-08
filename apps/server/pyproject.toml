@@ -9,6 +9,7 @@ description = "Backend control plane for a managed DHCP/IPAM edge appliance."
 requires-python = ">=3.11"
 dependencies = [
   "Django>=5.0,<6.0",
+  "djangorestframework>=3.15,<4.0",
 ]
 
 [project.optional-dependencies]
