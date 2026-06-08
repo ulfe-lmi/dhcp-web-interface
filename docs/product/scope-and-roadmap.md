@@ -6,7 +6,7 @@ Create repository structure, docs, placeholder code, scripts, and CI. No product
 
 ## 2. Backend Domain Model and Validation
 
-Introduce organizations, sites, subnets, pools, reservations, devices, config versions, deployments, public publication settings, and audit events with validation.
+Foundation implemented for organizations, sites, IPv4 subnets, DHCP pools, and static DHCP reservations with model-level validation and tests. Future backend chunks still need users, roles, devices, config versions, deployments, public publication settings, audit events, and broader validation.
 
 ## 3. Config Renderer and Artifact Schema
 

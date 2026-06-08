@@ -2,7 +2,7 @@
 
 Managed DHCP/IPAM Edge Appliance is a cloud-managed DDI-lite product concept for administering DHCP/IPAM/DNS state from a server-side control plane while Raspberry Pi edge appliances reconcile signed desired-state configuration to local `dnsmasq`. The server is the source of truth; the Pi is replaceable infrastructure that connects outbound, validates artifacts, applies only approved configuration, and reports status.
 
-Current status: **Bootstrap scaffold only; no production DHCP logic implemented yet.**
+Current status: **Backend domain model foundation exists for organizations, sites, IPv4 subnets, DHCP pools, and static reservations; no production DHCP rendering, APIs, UI, deployment, or edge apply logic implemented yet.**
 
 ## Architecture Overview
 
@@ -81,7 +81,7 @@ The public no-login view must be opt-in and disabled by default. It must read fr
 ## Roadmap
 
 1. Bootstrap scaffold, docs, placeholder tests, and CI.
-2. Backend domain model and validation.
+2. Backend domain model and validation foundation.
 3. Config renderer and signed artifact schema.
 4. Public read-only sanitized snapshot.
 5. Device gateway protocol skeleton.

@@ -1,6 +1,16 @@
 # Testing
 
-This scaffold includes placeholder tests only. Future implementation must add tests at each component boundary.
+The backend now includes Django model and validator tests for the initial IPAM/DHCP domain foundation. Future implementation must continue adding tests at each component boundary.
+
+Current backend checks:
+
+```bash
+cd apps/server
+python -m pip install -e ".[dev]"
+pytest
+python manage.py makemigrations --check --dry-run
+python manage.py migrate --noinput
+```
 
 ## Expected Layers
 
@@ -16,4 +26,4 @@ This scaffold includes placeholder tests only. Future implementation must add te
 
 ## CI Gates
 
-The initial CI runs Python placeholder tests, Go tests, and JSON parsing for the artifact schema. Later CI should add linting, type checks, frontend tests, secret scanning, license scanning, SBOM generation, and vulnerability scanning.
+CI runs backend Django tests, migration drift checks, migration application, Go placeholder tests, and JSON parsing for the artifact schema. Later CI should add linting, type checks, frontend tests, secret scanning, license scanning, SBOM generation, and vulnerability scanning.
