@@ -6,10 +6,10 @@ Current backend checks:
 
 ```bash
 cd apps/server
-python -m pip install -e ".[dev]"
-pytest
-python manage.py makemigrations --check --dry-run
-python manage.py migrate --noinput
+uv sync --extra dev --locked
+uv run pytest
+uv run python manage.py makemigrations --check --dry-run
+uv run python manage.py migrate --noinput
 ```
 
 ## Expected Layers
@@ -27,4 +27,4 @@ python manage.py migrate --noinput
 
 ## CI Gates
 
-CI runs backend Django tests, migration drift checks, migration application, Go placeholder tests, and JSON parsing for the artifact schema. Later CI should add linting, type checks, frontend tests, secret scanning, license scanning, SBOM generation, and vulnerability scanning.
+CI runs backend Django tests from the committed uv lockfile, migration drift checks, migration application, Go placeholder tests, and JSON parsing for the artifact schema. Later CI should add linting, type checks, frontend tests, secret scanning, license scanning, SBOM generation, and vulnerability scanning.

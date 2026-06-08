@@ -4,21 +4,21 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "managed-dhcp-server"
-version = "0.0.0"
-description = "Managed DHCP/IPAM control plane backend."
+version = "0.1.0"
+description = "Backend control plane for a managed DHCP/IPAM edge appliance."
 requires-python = ">=3.11"
 dependencies = [
-  "Django>=5.0,<5.3",
+  "Django>=5.0,<6.0",
 ]
 
 [project.optional-dependencies]
 dev = [
-  "pytest>=8",
-  "pytest-django>=4.8",
+  "pytest>=8.0,<9.0",
+  "pytest-django>=4.8,<5.0",
 ]
 test = [
-  "pytest>=8",
-  "pytest-django>=4.8",
+  "pytest>=8.0,<9.0",
+  "pytest-django>=4.8,<5.0",
 ]
 
 [tool.setuptools.packages.find]

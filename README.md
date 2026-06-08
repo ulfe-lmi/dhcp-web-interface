@@ -51,15 +51,28 @@ For this scaffold:
 
 - Python 3.11+
 - Go 1.22+
+- uv
 - Bash
 - Optional Node.js 20+ for future frontend work
 
-Future product milestones will add Django, DRF, PostgreSQL, Valkey, frontend tooling, and containerized local development.
+Future product milestones will add DRF, PostgreSQL, Valkey, frontend tooling, and containerized local development.
 
 ## Run Checks
 
+Backend dependencies are declared in `apps/server/pyproject.toml` and locked in `apps/server/uv.lock`. There is intentionally no root `requirements.txt` because this is a monorepo with separate Python, Go, and future Node components.
+
 ```bash
 scripts/check.sh
+```
+
+Backend checks can also be run directly with uv:
+
+```bash
+cd apps/server
+uv sync --extra dev --locked
+uv run pytest
+uv run python manage.py makemigrations --check --dry-run
+uv run python manage.py migrate --noinput
 ```
 
 Format supported scaffold code:
@@ -82,15 +95,17 @@ The public no-login view must be opt-in and disabled by default. It must read fr
 
 1. Bootstrap scaffold, docs, placeholder tests, and CI.
 2. Backend domain model and validation foundation.
-3. Config renderer and signed artifact schema.
-4. Public read-only sanitized snapshot.
-5. Device gateway protocol skeleton.
-6. Raspberry Pi agent skeleton.
-7. Apply helper and `dnsmasq --test` validation.
-8. Deployment lifecycle and rollback tracking.
-9. UI editor for sites, subnets, reservations, devices, and deployments.
-10. Import/export workflow.
-11. Observability and security hardening.
-12. Packaging and release process.
+3. Access, RBAC, and audit foundation.
+4. Backend dependency hygiene.
+5. Config renderer and signed artifact schema.
+6. Public read-only sanitized snapshot.
+7. Device gateway protocol skeleton.
+8. Raspberry Pi agent skeleton.
+9. Apply helper and `dnsmasq --test` validation.
+10. Deployment lifecycle and rollback tracking.
+11. UI editor for sites, subnets, reservations, devices, and deployments.
+12. Import/export workflow.
+13. Observability and security hardening.
+14. Packaging and release process.
 
 This repository is not yet functional production software.
