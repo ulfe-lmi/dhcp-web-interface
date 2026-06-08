@@ -9,6 +9,9 @@ DEBUG = True
 ALLOWED_HOSTS: list[str] = []
 
 INSTALLED_APPS = [
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "managed_dhcp_server.access.apps.AccessConfig",
     "managed_dhcp_server.ipam.apps.IpamConfig",
 ]
 
