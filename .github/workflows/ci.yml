@@ -25,12 +25,23 @@ jobs:
         with:
           go-version: "1.22"
 
-      - name: Install Python test dependencies
-        run: python -m pip install --upgrade pip pytest
+      - name: Install backend dependencies
+        working-directory: apps/server
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -e ".[dev]"
 
-      - name: Run Python placeholder tests
+      - name: Run backend Django tests
         working-directory: apps/server
         run: python -m pytest
+
+      - name: Check backend migrations
+        working-directory: apps/server
+        run: python manage.py makemigrations --check --dry-run
+
+      - name: Apply backend migrations
+        working-directory: apps/server
+        run: python manage.py migrate --noinput
 
       - name: Run device gateway Go tests
         working-directory: services/device-gateway

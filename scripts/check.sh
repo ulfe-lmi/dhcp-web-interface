@@ -28,19 +28,47 @@ run_python_tests() {
   echo "Validating JSON schema syntax"
   "$python_bin" -m json.tool "$ROOT_DIR/schemas/config-artifact.schema.json" >/dev/null
 
-  if "$python_bin" -m pytest --version >/dev/null 2>&1; then
-    echo "Running Python tests"
-    (cd "$ROOT_DIR/apps/server" && "$python_bin" -m pytest)
+  if ! python_bin="$(ensure_server_python "$python_bin")"; then
+    echo "Django test dependencies are not available and could not be installed; skipping backend Django checks"
     return 0
   fi
 
-  if "$python_bin" -m pip --version >/dev/null 2>&1 && "$python_bin" -m pip install --quiet --user pytest; then
-    echo "Running Python tests with user-installed pytest"
-    (cd "$ROOT_DIR/apps/server" && "$python_bin" -m pytest)
+  echo "Running backend Django tests"
+  (cd "$ROOT_DIR/apps/server" && "$python_bin" -m pytest)
+
+  echo "Checking backend migrations"
+  (cd "$ROOT_DIR/apps/server" && "$python_bin" manage.py makemigrations --check --dry-run)
+
+  echo "Applying backend migrations"
+  (cd "$ROOT_DIR/apps/server" && "$python_bin" manage.py migrate --noinput)
+}
+
+ensure_server_python() {
+  local python_bin="$1"
+
+  if "$python_bin" - <<'PY' >/dev/null 2>&1
+import django
+import pytest_django
+PY
+  then
+    echo "$python_bin"
     return 0
   fi
 
-  echo "pytest is not available and could not be installed; skipping Python tests"
+  if "$python_bin" -m pip --version >/dev/null 2>&1 && (cd "$ROOT_DIR/apps/server" && "$python_bin" -m pip install --quiet -e ".[dev]" >/dev/null 2>&1); then
+    echo "$python_bin"
+    return 0
+  fi
+
+  if "$python_bin" -m venv "$ROOT_DIR/apps/server/.venv" >/dev/null 2>&1; then
+    local venv_python="$ROOT_DIR/apps/server/.venv/bin/python"
+    if (cd "$ROOT_DIR/apps/server" && "$venv_python" -m pip install --quiet --upgrade pip && "$venv_python" -m pip install --quiet -e ".[dev]"); then
+      echo "$venv_python"
+      return 0
+    fi
+  fi
+
+  return 1
 }
 
 run_go_tests() {

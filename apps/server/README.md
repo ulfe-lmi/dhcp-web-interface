@@ -1,16 +1,51 @@
 # Server Control Plane
 
-Placeholder for the future Python/Django control plane.
+Python/Django backend foundation for the future control plane.
 
-Planned responsibilities:
+Implemented in this chunk:
+
+- minimal Django project wiring;
+- `ipam` app with organizations, sites, IPv4 subnets, DHCP pools, and static DHCP reservations;
+- validator functions for MAC addresses, IPv4 addresses/CIDRs, subnet membership, and hostnames;
+- initial migration and Django model tests.
+
+Planned responsibilities not implemented yet:
 
 - authentication and authorization;
-- organizations, sites, subnets, pools, reservations, DNS records, and devices;
-- validation and config versioning;
+- DNS records and devices;
+- config versioning;
 - deterministic `dnsmasq` rendering;
 - signed config artifact generation;
 - deployment and rollback records;
+- REST APIs;
 - public snapshot publication;
 - audit logging.
 
-This directory currently contains only a minimal Python package and placeholder test.
+## Install Development Dependencies
+
+```bash
+python -m pip install -e ".[dev]"
+```
+
+If your system Python is externally managed, create and activate a virtual environment first:
+
+```bash
+python -m venv .venv
+. .venv/bin/activate
+python -m pip install -e ".[dev]"
+```
+
+## Run Tests
+
+```bash
+pytest
+```
+
+## Run Migration Checks
+
+```bash
+python manage.py makemigrations --check --dry-run
+python manage.py migrate --noinput
+```
+
+This is domain model only. There are no APIs, UI flows, device communication paths, config rendering, deployments, public endpoints, or Pi apply logic in this PR.
