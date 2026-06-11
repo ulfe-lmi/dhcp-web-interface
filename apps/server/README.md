@@ -7,7 +7,7 @@ Currently implemented:
 - minimal Django project wiring;
 - `ipam` app with organizations, sites, IPv4 subnets, DHCP pools, and static DHCP reservations;
 - `access` app with organization memberships, site memberships, permission helpers, and append-only audit events;
-- `api` app with DRF routing under `/api/v1/` for health, current user, read-only organization/site endpoints, and membership-management endpoints;
+- `api` app with DRF routing under `/api/v1/` for health, current user, read-only organization/site endpoints, membership-management endpoints, and DHCP/IPAM CRUD endpoints;
 - validator functions for MAC addresses, IPv4 addresses/CIDRs, subnet membership, and hostnames;
 - initial migrations and Django model tests.
 
@@ -53,10 +53,37 @@ Current endpoints:
 - `POST /api/v1/sites/{id}/memberships/`
 - `PATCH /api/v1/sites/{id}/memberships/{membership_id}/`
 - `DELETE /api/v1/sites/{id}/memberships/{membership_id}/`
+- `GET /api/v1/sites/{site_id}/subnets/`
+- `POST /api/v1/sites/{site_id}/subnets/`
+- `GET /api/v1/sites/{site_id}/subnets/{subnet_id}/`
+- `PATCH /api/v1/sites/{site_id}/subnets/{subnet_id}/`
+- `DELETE /api/v1/sites/{site_id}/subnets/{subnet_id}/`
+- `GET /api/v1/subnets/{subnet_id}/pools/`
+- `POST /api/v1/subnets/{subnet_id}/pools/`
+- `GET /api/v1/subnets/{subnet_id}/pools/{pool_id}/`
+- `PATCH /api/v1/subnets/{subnet_id}/pools/{pool_id}/`
+- `DELETE /api/v1/subnets/{subnet_id}/pools/{pool_id}/`
+- `GET /api/v1/subnets/{subnet_id}/reservations/`
+- `POST /api/v1/subnets/{subnet_id}/reservations/`
+- `GET /api/v1/subnets/{subnet_id}/reservations/{reservation_id}/`
+- `PATCH /api/v1/subnets/{subnet_id}/reservations/{reservation_id}/`
+- `DELETE /api/v1/subnets/{subnet_id}/reservations/{reservation_id}/`
 
 Organization membership mutations are limited to superusers and organization owners. Organization admins can list memberships only in the current policy. Site membership mutations are limited to superusers, organization owners, organization admins, and site admins; site admins cannot create, update, or delete `site_admin` memberships. Successful membership mutations write `AuditEvent` records.
 
-There is no public no-login DHCP/IPAM table endpoint, DHCP/IPAM write endpoint, or production SSO/OIDC/MFA flow yet.
+## DHCP/IPAM API
+
+The DHCP/IPAM API manages IPv4 subnets, DHCP pools, and DHCP reservations for authenticated users with site visibility or DHCP edit permission.
+
+- Users who can view a site can read subnets, pools, and reservations for that site.
+- Organization owners/admins, site admins, and DHCP editors can create and update DHCP/IPAM data.
+- `DELETE` on DHCP pools and reservations disables the object by setting `enabled=false`; disabled records remain visible in authenticated lists.
+- `DELETE` on IPv4 subnets is allowed only when the subnet has no pools or reservations.
+- Successful DHCP/IPAM mutations write `AuditEvent` records.
+
+These endpoints are the backend API layer a later graphical interface will use. API writes do not render `dnsmasq` config, create config versions, trigger deployments, notify devices, or apply anything on a Raspberry Pi.
+
+There is no public no-login DHCP/IPAM table endpoint or production SSO/OIDC/MFA flow yet.
 
 ## Dependency Management
 
@@ -89,4 +116,4 @@ uv run python manage.py makemigrations --check --dry-run
 uv run python manage.py migrate --noinput
 ```
 
-This is domain, access, read API, and membership-management API foundation only. There are no UI flows, device communication paths, config rendering, deployments, public endpoints, DHCP/IPAM write endpoints, or Pi apply logic in this PR.
+This is domain, access, read API, membership-management API, and DHCP/IPAM CRUD API foundation only. There are no UI flows, device communication paths, config rendering, deployments, public endpoints, or Pi apply logic in this PR.

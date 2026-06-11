@@ -8,7 +8,7 @@ The future control plane lives under `apps/server`. It will own organizations, u
 
 PostgreSQL is the authoritative data store. The Pi must never be treated as the source of truth.
 
-The initial backend foundation now includes Django models and validation for organizations, sites, IPv4 subnets, DHCP pools, and static DHCP reservations under `managed_dhcp_server.ipam`. It also includes authenticated read-only API endpoints for current user, organizations, and sites under `/api/v1/`. Config rendering, deployments, public snapshots, and device communication do not exist yet.
+The initial backend foundation now includes Django models and validation for organizations, sites, IPv4 subnets, DHCP pools, and static DHCP reservations under `managed_dhcp_server.ipam`. It also includes authenticated API endpoints for current user, organizations, sites, membership management, and DHCP/IPAM CRUD under `/api/v1/`. Config rendering, deployments, public snapshots, and device communication do not exist yet.
 
 ## Web UI
 
