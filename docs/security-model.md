@@ -46,6 +46,12 @@ DHCP/IPAM mutation endpoints enforce backend RBAC. Authenticated viewers can rea
 
 Cross-parent manipulation returns 404. A subnet endpoint under one site cannot operate on another site's subnet, and pool or reservation endpoints under one subnet cannot operate on another subnet's child records. Successful DHCP/IPAM mutations write `AuditEvent` records. API writes do not render config, create deployments, notify devices, write `dnsmasq` files, or automatically apply changes.
 
+## Config Rendering API Security
+
+Rendered `dnsmasq` config previews are private authenticated API data. Users with site view permission can inspect config version metadata and rendered files, but config version creation requires DHCP edit permission.
+
+Successful config version creation writes a `config_version.created` audit event. Creating a config version does not deploy, notify devices, write files, call `dnsmasq`, or expose rendered config through any public no-login route.
+
 ## Audit
 
 The backend now has append-only audit event records at the model layer. Future implementation must audit meaningful actions, including login events, membership changes, site and reservation changes, imports, config version creation and approval, deployments, rollback, public view changes, enrollment token creation, device enrollment, revocation, and replacement.

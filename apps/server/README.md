@@ -8,6 +8,7 @@ Currently implemented:
 - `ipam` app with organizations, sites, IPv4 subnets, DHCP pools, and static DHCP reservations;
 - `access` app with organization memberships, site memberships, permission helpers, and append-only audit events;
 - `api` app with DRF routing under `/api/v1/` for health, current user, read-only organization/site endpoints, membership-management endpoints, and DHCP/IPAM CRUD endpoints;
+- `configs` app with config versions and deterministic private `dnsmasq` rendering previews;
 - validator functions for MAC addresses, IPv4 addresses/CIDRs, subnet membership, and hostnames;
 - initial migrations and Django model tests.
 
@@ -15,8 +16,6 @@ Planned responsibilities not implemented yet:
 
 - authentication UI, SSO/OIDC, MFA, and production authentication flows;
 - DNS records and devices;
-- config versioning;
-- deterministic `dnsmasq` rendering;
 - signed config artifact generation;
 - deployment and rollback records;
 - public snapshot publication;
@@ -85,6 +84,19 @@ These endpoints are the backend API layer a later graphical interface will use. 
 
 There is no public no-login DHCP/IPAM table endpoint or production SSO/OIDC/MFA flow yet.
 
+## Config Versions and Rendering
+
+Config versions can now be created for a site through the authenticated API:
+
+- `GET /api/v1/sites/{site_id}/config-versions/`
+- `POST /api/v1/sites/{site_id}/config-versions/`
+- `GET /api/v1/sites/{site_id}/config-versions/{config_version_id}/`
+- `GET /api/v1/sites/{site_id}/config-versions/{config_version_id}/rendered-files/`
+
+The renderer converts structured IPv4 subnets, DHCP pools, and DHCP reservations into deterministic private `dnsmasq` config previews. Creation requires DHCP edit permission and writes an `AuditEvent`.
+
+Rendering does not deploy to any Raspberry Pi, notify devices, write files, call `dnsmasq`, or perform real artifact signing. Real signing, gateway notification, deployment records, and Pi apply logic are later milestones.
+
 ## Dependency Management
 
 Backend dependency intent lives in `pyproject.toml`. Exact resolved versions live in the committed `uv.lock` lockfile. Use uv for reproducible installs and checks.
@@ -116,4 +128,4 @@ uv run python manage.py makemigrations --check --dry-run
 uv run python manage.py migrate --noinput
 ```
 
-This is domain, access, read API, membership-management API, and DHCP/IPAM CRUD API foundation only. There are no UI flows, device communication paths, config rendering, deployments, public endpoints, or Pi apply logic in this PR.
+This is domain, access, read API, membership-management API, DHCP/IPAM CRUD API, and config-rendering preview foundation only. There are no UI flows, device communication paths, deployments, public endpoints, real artifact signing, or Pi apply logic in this PR.

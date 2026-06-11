@@ -4,6 +4,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from managed_dhcp_server.access.models import OrganizationMembership, OrganizationRole, SiteMembership, SiteRole
+from managed_dhcp_server.configs.models import ConfigVersion
 from managed_dhcp_server.ipam.models import DHCPPool, DHCPReservation, IPv4Subnet, Organization, Site
 
 
@@ -203,3 +204,36 @@ class DHCPReservationWriteSerializer(_StrictFieldsMixin, serializers.Serializer)
     ip_address = serializers.IPAddressField(protocol="IPv4", required=False)
     description = serializers.CharField(required=False, allow_blank=True)
     enabled = serializers.BooleanField(required=False)
+
+
+class ConfigVersionSerializer(serializers.ModelSerializer):
+    created_by_summary = UserSummarySerializer(source="created_by", read_only=True)
+    approved_by_summary = UserSummarySerializer(source="approved_by", read_only=True)
+
+    class Meta:
+        model = ConfigVersion
+        fields = [
+            "id",
+            "site",
+            "version_number",
+            "status",
+            "created_by",
+            "created_by_summary",
+            "approved_by",
+            "approved_by_summary",
+            "source_kind",
+            "change_summary",
+            "validation_result",
+            "artifact_hash",
+            "artifact_signature",
+            "created_at",
+            "approved_at",
+            "updated_at",
+        ]
+        read_only_fields = fields
+
+
+class ConfigVersionCreateSerializer(_StrictFieldsMixin, serializers.Serializer):
+    writable_fields = {"change_summary"}
+
+    change_summary = serializers.CharField(required=False, allow_blank=True)

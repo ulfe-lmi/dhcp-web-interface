@@ -11,6 +11,8 @@ from rest_framework.views import APIView
 
 from managed_dhcp_server.access.models import OrganizationMembership, SiteMembership
 from managed_dhcp_server.access.permissions import can_edit_site_dhcp
+from managed_dhcp_server.configs.models import ConfigVersion
+from managed_dhcp_server.configs.services import create_config_version_for_site
 from managed_dhcp_server.ipam.models import DHCPPool, DHCPReservation, IPv4Subnet, Organization, Site
 
 from .permissions import (
@@ -25,6 +27,8 @@ from .serializers import (
     DHCPPoolWriteSerializer,
     DHCPReservationSerializer,
     DHCPReservationWriteSerializer,
+    ConfigVersionCreateSerializer,
+    ConfigVersionSerializer,
     IPv4SubnetSerializer,
     IPv4SubnetWriteSerializer,
     OrganizationMembershipSerializer,
@@ -309,6 +313,46 @@ class DHCPReservationDetailView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+class ConfigVersionListCreateView(APIView):
+    def get(self, request: Request, site_id: str) -> Response:
+        site = _visible_site_or_404(request.user, site_id)
+        config_versions = site.config_versions.select_related("created_by", "approved_by").all()
+        return Response(ConfigVersionSerializer(config_versions, many=True).data)
+
+    def post(self, request: Request, site_id: str) -> Response:
+        site = _visible_site_or_404(request.user, site_id)
+        _check_dhcp_edit_permission(request.user, site)
+
+        serializer = ConfigVersionCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        config_version = create_config_version_for_site(
+            actor=request.user,
+            site=site,
+            change_summary=serializer.validated_data.get("change_summary", ""),
+        )
+        return Response(ConfigVersionSerializer(config_version).data, status=status.HTTP_201_CREATED)
+
+
+class ConfigVersionDetailView(APIView):
+    def get(self, request: Request, site_id: str, config_version_id: str) -> Response:
+        site = _visible_site_or_404(request.user, site_id)
+        config_version = _site_config_version_or_404(site, config_version_id)
+        return Response(ConfigVersionSerializer(config_version).data)
+
+
+class ConfigVersionRenderedFilesView(APIView):
+    def get(self, request: Request, site_id: str, config_version_id: str) -> Response:
+        site = _visible_site_or_404(request.user, site_id)
+        config_version = _site_config_version_or_404(site, config_version_id)
+        return Response(
+            {
+                "config_version": str(config_version.id),
+                "version_number": config_version.version_number,
+                "files": config_version.rendered_files,
+            }
+        )
+
+
 def _visible_organization_or_404(user: object, organization_id: str) -> Organization:
     organization = organizations_visible_to_user(user).filter(pk=organization_id).first()
     if organization is None:
@@ -371,6 +415,14 @@ def _subnet_reservation_or_404(subnet: IPv4Subnet, reservation_id: str) -> DHCPR
         DHCPReservation.objects.select_related("subnet", "subnet__site", "subnet__site__organization"),
         pk=reservation_id,
         subnet=subnet,
+    )
+
+
+def _site_config_version_or_404(site: Site, config_version_id: str) -> ConfigVersion:
+    return get_object_or_404(
+        ConfigVersion.objects.select_related("site", "site__organization", "created_by", "approved_by"),
+        pk=config_version_id,
+        site=site,
     )
 
 
