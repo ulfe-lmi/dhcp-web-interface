@@ -14,6 +14,7 @@ INSTALLED_APPS = [
     "rest_framework",
     "managed_dhcp_server.access.apps.AccessConfig",
     "managed_dhcp_server.api.apps.ApiConfig",
+    "managed_dhcp_server.configs.apps.ConfigsConfig",
     "managed_dhcp_server.ipam.apps.IpamConfig",
 ]
 

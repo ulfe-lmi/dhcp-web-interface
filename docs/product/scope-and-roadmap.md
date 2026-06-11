@@ -30,7 +30,7 @@ Foundation implemented for authenticated IPv4 subnet, DHCP pool, and DHCP reserv
 
 ## 8. Config Renderer and Artifact Schema
 
-Render deterministic `dnsmasq` files from structured state. Produce immutable signed artifacts with hashes and schema validation.
+Foundation implemented for immutable per-site config versions, deterministic private `dnsmasq` rendering previews, file hashes, artifact hashes, and audit events for successful config version creation. Future chunks still need real artifact signing, schema validation against packaged artifacts, approvals, deployments, gateway notification, and Pi apply logic.
 
 ## 9. Public Read-Only Snapshot
 

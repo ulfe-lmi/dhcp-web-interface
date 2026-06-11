@@ -8,7 +8,7 @@ The future control plane lives under `apps/server`. It will own organizations, u
 
 PostgreSQL is the authoritative data store. The Pi must never be treated as the source of truth.
 
-The initial backend foundation now includes Django models and validation for organizations, sites, IPv4 subnets, DHCP pools, and static DHCP reservations under `managed_dhcp_server.ipam`. It also includes authenticated API endpoints for current user, organizations, sites, membership management, and DHCP/IPAM CRUD under `/api/v1/`. Config rendering, deployments, public snapshots, and device communication do not exist yet.
+The initial backend foundation now includes Django models and validation for organizations, sites, IPv4 subnets, DHCP pools, and static DHCP reservations under `managed_dhcp_server.ipam`. It also includes authenticated API endpoints for current user, organizations, sites, membership management, DHCP/IPAM CRUD, config version creation, and private rendered config preview under `/api/v1/`. Deployments, public snapshots, and device communication do not exist yet.
 
 ## Web UI
 
@@ -54,12 +54,11 @@ dnsmasq --test
 
 1. Backend validates structured DHCP/IPAM state.
 2. Backend creates an immutable config version.
-3. Backend renders deterministic `dnsmasq` files.
-4. Backend computes hashes and signs the artifact.
-5. Gateway notifies the correct device that a version is available.
-6. Agent downloads, verifies, and stages the artifact.
-7. Apply helper validates and atomically applies the managed files.
-8. Agent reports success or failure.
+3. Backend renders deterministic `dnsmasq` files into private stored preview data.
+4. Backend computes file hashes and an artifact hash.
+5. Later work will sign artifacts, notify devices, download/stage/apply on agents, and record deployment results.
+
+Current implementation stops at config version, rendered files, manifest, and hash. It does not sign artifacts, notify devices, write `dnsmasq` files, or deploy anything.
 
 ## Deployment Lifecycle
 

@@ -4,6 +4,9 @@ from django.urls import path
 from rest_framework.routers import SimpleRouter
 
 from .views import (
+    ConfigVersionDetailView,
+    ConfigVersionListCreateView,
+    ConfigVersionRenderedFilesView,
     CurrentUserView,
     DHCPPoolDetailView,
     DHCPPoolListCreateView,
@@ -51,6 +54,21 @@ urlpatterns = [
         "sites/<uuid:site_id>/subnets/",
         IPv4SubnetListCreateView.as_view(),
         name="ipv4-subnet-list",
+    ),
+    path(
+        "sites/<uuid:site_id>/config-versions/",
+        ConfigVersionListCreateView.as_view(),
+        name="config-version-list",
+    ),
+    path(
+        "sites/<uuid:site_id>/config-versions/<uuid:config_version_id>/",
+        ConfigVersionDetailView.as_view(),
+        name="config-version-detail",
+    ),
+    path(
+        "sites/<uuid:site_id>/config-versions/<uuid:config_version_id>/rendered-files/",
+        ConfigVersionRenderedFilesView.as_view(),
+        name="config-version-rendered-files",
     ),
     path(
         "sites/<uuid:site_id>/subnets/<uuid:subnet_id>/",
