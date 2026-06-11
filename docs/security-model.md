@@ -40,6 +40,12 @@ Authenticated read API endpoints use membership and RBAC visibility rules. Inacc
 
 Membership mutation endpoints enforce backend RBAC. Cross-organization and cross-site membership manipulation returns 404, organization owner lockout is prevented by preserving at least one owner membership, and successful membership mutations are audited. Public no-login viewing remains future work and must use sanitized published snapshots only.
 
+## DHCP/IPAM Write API Security
+
+DHCP/IPAM mutation endpoints enforce backend RBAC. Authenticated viewers can read DHCP/IPAM data for visible sites, but viewers, auditors, public publishers, and device installers cannot mutate subnets, pools, or reservations. Organization owners/admins, site admins, and DHCP editors can make DHCP/IPAM changes for their visible site scope.
+
+Cross-parent manipulation returns 404. A subnet endpoint under one site cannot operate on another site's subnet, and pool or reservation endpoints under one subnet cannot operate on another subnet's child records. Successful DHCP/IPAM mutations write `AuditEvent` records. API writes do not render config, create deployments, notify devices, write `dnsmasq` files, or automatically apply changes.
+
 ## Audit
 
 The backend now has append-only audit event records at the model layer. Future implementation must audit meaningful actions, including login events, membership changes, site and reservation changes, imports, config version creation and approval, deployments, rollback, public view changes, enrollment token creation, device enrollment, revocation, and replacement.

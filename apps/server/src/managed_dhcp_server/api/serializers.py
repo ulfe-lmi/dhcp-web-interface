@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
 from managed_dhcp_server.access.models import OrganizationMembership, OrganizationRole, SiteMembership, SiteRole
-from managed_dhcp_server.ipam.models import Organization, Site
+from managed_dhcp_server.ipam.models import DHCPPool, DHCPReservation, IPv4Subnet, Organization, Site
 
 
 class UserSummarySerializer(serializers.ModelSerializer):
@@ -90,3 +90,116 @@ class SiteMembershipWriteSerializer(serializers.Serializer):
         extra_fields = set(self.initial_data) - allowed_fields
         if extra_fields:
             raise serializers.ValidationError({field: ["This field is not writable here."] for field in sorted(extra_fields)})
+
+
+class _StrictFieldsMixin:
+    required_create_fields: set[str] = set()
+    writable_fields: set[str] = set()
+
+    def validate(self, attrs: dict[str, object]) -> dict[str, object]:
+        self._validate_allowed_fields()
+        if self.context.get("patch") and not attrs:
+            raise serializers.ValidationError({"non_field_errors": ["At least one writable field is required."]})
+        if not self.context.get("patch"):
+            missing_fields = self.required_create_fields - set(self.initial_data)
+            if missing_fields:
+                raise serializers.ValidationError({field: ["This field is required."] for field in sorted(missing_fields)})
+        return attrs
+
+    def _validate_allowed_fields(self) -> None:
+        extra_fields = set(self.initial_data) - self.writable_fields
+        if extra_fields:
+            raise serializers.ValidationError({field: ["This field is not writable here."] for field in sorted(extra_fields)})
+
+
+class IPv4SubnetSerializer(serializers.ModelSerializer):
+    site_name = serializers.CharField(source="site.name", read_only=True)
+
+    class Meta:
+        model = IPv4Subnet
+        fields = [
+            "id",
+            "site",
+            "site_name",
+            "name",
+            "cidr",
+            "gateway",
+            "dns_servers",
+            "default_lease_time_seconds",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = fields
+
+
+class IPv4SubnetWriteSerializer(_StrictFieldsMixin, serializers.Serializer):
+    required_create_fields = {"name", "cidr"}
+    writable_fields = {"name", "cidr", "gateway", "dns_servers", "default_lease_time_seconds"}
+
+    name = serializers.CharField(max_length=255, required=False)
+    cidr = serializers.CharField(max_length=43, required=False)
+    gateway = serializers.IPAddressField(protocol="IPv4", required=False, allow_null=True)
+    dns_servers = serializers.ListField(child=serializers.IPAddressField(protocol="IPv4"), required=False)
+    default_lease_time_seconds = serializers.IntegerField(min_value=1, required=False)
+
+
+class DHCPPoolSerializer(serializers.ModelSerializer):
+    subnet_cidr = serializers.CharField(source="subnet.cidr", read_only=True)
+
+    class Meta:
+        model = DHCPPool
+        fields = [
+            "id",
+            "subnet",
+            "subnet_cidr",
+            "name",
+            "start_ip",
+            "end_ip",
+            "lease_time_seconds",
+            "enabled",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = fields
+
+
+class DHCPPoolWriteSerializer(_StrictFieldsMixin, serializers.Serializer):
+    required_create_fields = {"name", "start_ip", "end_ip"}
+    writable_fields = {"name", "start_ip", "end_ip", "lease_time_seconds", "enabled"}
+
+    name = serializers.CharField(max_length=255, required=False)
+    start_ip = serializers.IPAddressField(protocol="IPv4", required=False)
+    end_ip = serializers.IPAddressField(protocol="IPv4", required=False)
+    lease_time_seconds = serializers.IntegerField(min_value=1, required=False, allow_null=True)
+    enabled = serializers.BooleanField(required=False)
+
+
+class DHCPReservationSerializer(serializers.ModelSerializer):
+    subnet_cidr = serializers.CharField(source="subnet.cidr", read_only=True)
+
+    class Meta:
+        model = DHCPReservation
+        fields = [
+            "id",
+            "subnet",
+            "subnet_cidr",
+            "hostname",
+            "mac_address",
+            "ip_address",
+            "description",
+            "enabled",
+            "created_at",
+            "updated_at",
+        ]
+        read_only_fields = fields
+
+
+class DHCPReservationWriteSerializer(_StrictFieldsMixin, serializers.Serializer):
+    required_create_fields = {"hostname", "mac_address", "ip_address"}
+    writable_fields = {"hostname", "mac_address", "ip_address", "description", "enabled"}
+
+    hostname = serializers.CharField(max_length=253, required=False)
+    mac_address = serializers.CharField(max_length=32, required=False)
+    ip_address = serializers.IPAddressField(protocol="IPv4", required=False)
+    description = serializers.CharField(required=False, allow_blank=True)
+    enabled = serializers.BooleanField(required=False)

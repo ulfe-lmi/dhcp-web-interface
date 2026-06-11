@@ -1,6 +1,6 @@
 # Testing
 
-The backend now includes Django model and validator tests for the initial IPAM/DHCP domain foundation, access-control and audit-event tests, read-only API tests, and membership-management API tests. Future implementation must continue adding tests at each component boundary.
+The backend now includes Django model and validator tests for the initial IPAM/DHCP domain foundation, access-control and audit-event tests, read-only API tests, membership-management API tests, and DHCP/IPAM CRUD API tests. Future implementation must continue adding tests at each component boundary.
 
 Current backend checks:
 
@@ -18,6 +18,7 @@ uv run python manage.py migrate --noinput
 - Access tests for membership uniqueness, role behavior, permission helpers, and append-only audit behavior.
 - API tests for health, current-user, read-only organization/site visibility, and read-only method restrictions.
 - Membership API tests for role boundaries, owner lockout prevention, cross-parent protection, safe serializers, and audit event creation.
+- DHCP/IPAM API tests for subnet, pool, and reservation CRUD, RBAC boundaries, model validation through API writes, cross-parent protection, soft-disable behavior, and audit event creation.
 - API tests for authenticated reads, mutations, RBAC, tenant isolation, pagination, and public endpoint behavior.
 - Frontend tests for critical flows, table behavior, import preview, deployment review, and public view rendering.
 - Go unit tests for gateway message parsing, device identity checks, routing, heartbeats, and result reports.
